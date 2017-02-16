@@ -5,6 +5,7 @@
  */
 
 function parseDependencies(s) {
+  // 不存在'require'，不需要解析依赖
   if(s.indexOf('require') == -1) {
     return []
   }
