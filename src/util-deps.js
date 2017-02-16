@@ -95,6 +95,7 @@ function parseDependencies(s) {
     }
     else if(peek == '{') {
       if(isReturn) {
+        // return第一个返回的值是一个对象
         braceState = 1
       }
       braceStack.push(braceState)
@@ -214,7 +215,7 @@ function parseDependencies(s) {
       'typeof': 1,
       'void': 1
     }[r]
-    // 下面的值是return返回的结果
+    // 下面的值是return第一个可能返回的值
     isReturn = r == 'return'
     braceState = {
       'instanceof': 1,
