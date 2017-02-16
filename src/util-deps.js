@@ -9,6 +9,7 @@ function parseDependencies(s) {
   if(s.indexOf('require') == -1) {
     return []
   }
+  // isReg为1时，代表该行可能会出现正则表达式
   var index = 0, peek, length = s.length, isReg = 1, modName = 0, res = []
   var parentheseState = 0, parentheseStack = []
   var braceState, braceStack = [], isReturn
@@ -73,12 +74,16 @@ function parseDependencies(s) {
       braceState = 0
     }
     else if(peek == '(') {
+      // 如果上一次查找到了'if','for'这类的词，parentheseState值为1
+      // 否则为0
       parentheseStack.push(parentheseState)
       isReg = 1
       isReturn = 0
       braceState = 1
     }
     else if(peek == ')') {
+      // 如果'()'以'if','for'这类的词开始，则此时isReg的值为1
+      // 否则为0
       isReg = parentheseStack.pop()
       isReturn = 0
       braceState = 0
