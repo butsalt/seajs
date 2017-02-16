@@ -44,6 +44,7 @@ function parseDependencies(s) {
           index = length
         }
         else {
+          // 注释结束的位置 + 1
           index += 2
         }
         if(isReturn && i != -1 && i < index) {
@@ -60,7 +61,9 @@ function parseDependencies(s) {
         braceState = 0
       }
       else {
+        // 只可能是正则表达式了，重新执行上一步操作
         index--
+        // 使得可以顺利地进入dealReg逻辑
         isReg = 1
         isReturn = 0
         braceState = 1
@@ -83,7 +86,8 @@ function parseDependencies(s) {
       braceState = 1
     }
     else if(peek == ')') {
-      // 如果'()'以'if','for'这类的词开始，则此时isReg的值为1
+      // if(1) /reg/
+      // 如果'()'以'if','for'这类的词开始，则此时isReg的值为1，因为同行还是有可能出现正则表达式
       // 否则为0
       isReg = parentheseStack.pop()
       isReturn = 0
