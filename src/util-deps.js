@@ -204,6 +204,7 @@ function parseDependencies(s) {
       'typeof': 1,
       'void': 1
     }[r]
+    // 下面的值是return返回的结果
     isReturn = r == 'return'
     braceState = {
       'instanceof': 1,
