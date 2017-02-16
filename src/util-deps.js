@@ -28,12 +28,14 @@ function parseDependencies(s) {
     else if(peek == '/') {
       readch()
       if(peek == '/') {
+        // // 注释
         index = s.indexOf('\n', index)
         if(index == -1) {
           index = s.length
         }
       }
       else if(peek == '*') {
+        // /*  */ 注释
         var i = s.indexOf('\n', index)
         index = s.indexOf('*/', index)
         if(index == -1) {
@@ -48,6 +50,7 @@ function parseDependencies(s) {
         }
       }
       else if(isReg) {
+        // /test/ 正则表达式
         dealReg()
         isReg = 0
         isReturn = 0
@@ -152,9 +155,11 @@ function parseDependencies(s) {
     while(index < length) {
       readch()
       if(peek == '\\') {
+        // 已转义下一个字符无论是什么都跳过
         index++
       }
       else if(peek == '/') {
+        // 已到正则表达式的结尾
         break
       }
       else if(peek == '[') {
