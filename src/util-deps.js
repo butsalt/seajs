@@ -54,6 +54,7 @@ function parseDependencies(s) {
       else if(isReg) {
         // /test/ 正则表达式
         dealReg()
+        // 一行内只可能定义一个正则表达式
         isReg = 0
         isReturn = 0
         braceState = 0
