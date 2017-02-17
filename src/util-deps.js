@@ -100,6 +100,7 @@ function parseDependencies(s) {
         // return接下来就是'{'，说明是进入了右侧对象
         braceState = 1
       }
+      // 以下场合由于'{'之前出现了')'，已将braceState设成了1
       // 'while () {}' 之后可以直接出现正则表达式
       // 'if () {}' 之后可以直接出现正则表达式
       // 'function () {}' 之后可以直接出现正则表达式
