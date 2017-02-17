@@ -9,7 +9,7 @@ function parseDependencies(s) {
   if(s.indexOf('require') == -1) {
     return []
   }
-  // isReg为1时，代表该行可能会出现正则表达式
+  // isReg为1时，代表该行接下来允许直接出现正则表达式
   var index = 0, peek, length = s.length, isReg = 1, modName = 0, res = []
   var parentheseState = 0, parentheseStack = []
   var braceState, braceStack = [], isReturn
@@ -55,7 +55,7 @@ function parseDependencies(s) {
       else if(isReg) {
         // /test/ 正则表达式
         dealReg()
-        // 一行内只可能定义一个正则表达式
+        // 接下来不允许直接出现正则表达式
         isReg = 0
         isReturn = 0
         braceState = 0
@@ -87,7 +87,7 @@ function parseDependencies(s) {
     }
     else if(peek == ')') {
       // if(1) /reg/
-      // 如果'()'以'if','for'这类的词开始，则此时isReg的值为1，因为同行还是有可能出现正则表达式
+      // 如果'()'以'if','for'这类的词开始，则此时isReg的值为1，因为该行还是允许直接出现正则表达式
       // 否则为0
       isReg = parentheseStack.pop()
       isReturn = 0
