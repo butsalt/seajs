@@ -30,14 +30,14 @@ function parseDependencies(s) {
     else if(peek == '/') {
       readch()
       if(peek == '/') {
-        // // 注释
+        // '// 注释'
         index = s.indexOf('\n', index)
         if(index == -1) {
           index = s.length
         }
       }
       else if(peek == '*') {
-        // /*  */ 注释
+        // '/*  */ 注释''
         var i = s.indexOf('\n', index)
         index = s.indexOf('*/', index)
         if(index == -1) {
@@ -61,9 +61,10 @@ function parseDependencies(s) {
         braceState = 0
       }
       else {
-        // 只可能是正则表达式了，重新执行上一步操作
+        // '/reg/ / /reg/'
+        // '5 / /reg/'
+        // 当前可能是正则表达式，重新执行上一步操作
         index--
-        // 使得可以顺利地进入dealReg逻辑
         isReg = 1
         isReturn = 0
         braceState = 1
@@ -83,6 +84,7 @@ function parseDependencies(s) {
       parentheseStack.push(parentheseState)
       isReg = 1
       isReturn = 0
+      // 接下来如果是'{'，说明是进入了右侧对象
       braceState = 1
     }
     else if(peek == ')') {
@@ -95,15 +97,19 @@ function parseDependencies(s) {
     }
     else if(peek == '{') {
       if(isReturn) {
-        // return第一个返回的值是一个对象
+        // return接下来就是'{'，说明是进入了右侧对象
         braceState = 1
       }
+      // 'while () {}' 之后可以直接出现正则表达式
+      // 'if () {}' 之后可以直接出现正则表达式
+      // 'function () {}' 之后可以直接出现正则表达式
       braceStack.push(braceState)
       isReturn = 0
       isReg = 1
     }
     else if(peek == '}') {
       braceState = braceStack.pop()
+      // braceState为1说明之前是右侧对象，对象之后不能直接出现正则表达式
       isReg = !braceState
       isReturn = 0
     }
@@ -156,6 +162,7 @@ function parseDependencies(s) {
         }
       }
     }
+    // 上一次操作dealWord断定了使用了require
     if(modName) {
       //maybe substring is faster  than slice .
       res.push(s.substring(start, index - 1))
@@ -217,6 +224,7 @@ function parseDependencies(s) {
     }[r]
     // 下面的值是return第一个可能返回的值
     isReturn = r == 'return'
+    // 如果接下来是'{'，说明是进入了右侧对象
     braceState = {
       'instanceof': 1,
       'delete': 1,
@@ -226,7 +234,10 @@ function parseDependencies(s) {
     }.hasOwnProperty(r)
     modName = /^require\s*(?:\/\*[\s\S]*?\*\/\s*)?\(\s*(['"]).+?\1\s*[),]/.test(s2)
     if(modName) {
+      // require /*  */ ( 'modName')
       r = /^require\s*(?:\/\*[\s\S]*?\*\/\s*)?\(\s*['"]/.exec(s2)[0]
+      // 下一次从引号开始
+      // -2理由是开始的'r'占一位，结尾的引号也占一位
       index += r.length - 2
     }
     else {
@@ -250,6 +261,7 @@ function parseDependencies(s) {
       r = /^\d+\.?\d*(?:E[+-]?\d*)?\s*/i.exec(s2)[0]
     }
     index += r.length - 1
+    // 数字之后的'/'只能是除号，不可能是正则表达式的开始
     isReg = 0
   }
 }
